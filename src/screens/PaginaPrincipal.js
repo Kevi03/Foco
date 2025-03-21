@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Button } from 'react-native';
+import { View, Text, SafeAreaView, Button } from 'react-native';
 import * as Network from 'expo-network';
 import { useNavigation } from '@react-navigation/native';
+import globalStyles from '../style/GlobalStyles';
 
 const PaginaPrincipal = () => {
   const [informacionRed, setInformacionRed] = useState(null);
@@ -17,64 +18,39 @@ const PaginaPrincipal = () => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.contenedor}>
-      <Text style={styles.titulo}>Información de Conexión</Text>
-      <View style={styles.contenedorInformacionRed}>
+    <SafeAreaView style={globalStyles.contenedor}>
+      <Text style={globalStyles.titulo}>Información de Conexión</Text>
+      <View style={globalStyles.contenedorInformacionRed}>
         {informacionRed ? (
           <>
-            <Text style={styles.texto}>Tipo: {informacionRed.type}</Text>
-            <Text style={styles.texto}>Conectado: {informacionRed.isConnected ? 'Sí' : 'No'}</Text>
+            <Text style={globalStyles.texto}>Tipo: {informacionRed.type}</Text>
+            <Text style={globalStyles.texto}>Conectado: {informacionRed.isConnected ? 'Sí' : 'No'}</Text>
             {informacionRed.type === 'WIFI' && (
-              <Text style={styles.texto}>
+              <Text style={globalStyles.texto}>
                 Nombre de la Red (SSID): {informacionRed.isConnected ? 'No disponible en Expo Go' : 'No conectado'}
               </Text>
             )}
           </>
         ) : (
-          <Text style={styles.texto}>Cargando...</Text>
+          <Text style={globalStyles.texto}>Cargando...</Text>
         )}
       </View>
       
-      <Button
-        title="Conectarse manualmente"
-        onPress={() => navigation.navigate('ConfiguracionWiFi')}
-      />
-
-      <Button
-        title="Controlar foco"
-        onPress={() => navigation.navigate('ControlFoco')}
-      />
+      <View style={globalStyles.botonesContainer}>
+        <Button
+          title="Conectarse manualmente"
+          onPress={() => navigation.navigate('ConfiguracionWiFi')}
+          color="#6200ee"
+        />
+        <View style={globalStyles.espacioBotones} />
+        <Button
+          title="Controlar foco"
+          onPress={() => navigation.navigate('ControlFoco')}
+          color="#6200ee"
+        />
+      </View>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#f9f9f9',
-  },
-  titulo: {
-    fontSize: 22,
-    textAlign: 'center',
-    marginBottom: 20,
-    color: '#333',
-  },
-  contenedorInformacionRed: {
-    padding: 15,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 3,
-  },
-  texto: {
-    fontSize: 16,
-    color: '#555',
-    marginBottom: 8,
-  },
-});
 
 export default PaginaPrincipal;

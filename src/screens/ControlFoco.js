@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Image, TouchableOpacity } from 'react-native';
-import WebSocket from 'websocket';
+import { View, Text, Button, Image, TouchableOpacity } from 'react-native';
+import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import { useNavigation } from '@react-navigation/native';
+import globalStyles from '../style/GlobalStyles'; 
 
 const imagenApagado = require('../../assets/focoApagado.jpg');
 const imagenPrendido = require('../../assets/focoPrendido.jpg');
-
-const socket = new WebSocket.w3cwebsocket('ws://<IP_DEL_ESP32>:<PUERTO>');
 
 const ControlFoco = () => {
   const [estaConectado, setEstaConectado] = useState(false);
@@ -16,6 +15,8 @@ const ControlFoco = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
+    const socket = new W3CWebSocket('ws://<IP_DEL_ESP32>:<PUERTO>');
+
     socket.onopen = () => {
       console.log('Conexión WebSocket establecida');
       setEstaConectado(true);
@@ -23,8 +24,8 @@ const ControlFoco = () => {
       setWs(socket);
     };
 
-    socket.onerror = () => {
-      console.log('Error de conexión WebSocket');
+    socket.onerror = (error) => {
+      console.log('Error de conexión WebSocket', error);
       setEstaConectado(false);
       setHayError(true);
     };
@@ -34,6 +35,16 @@ const ControlFoco = () => {
       setEstaConectado(false);
       setHayError(true);
     };
+
+    socket.onmessage = (message) => {
+      if (message.data === 'on') {
+        setImagen(imagenPrendido);
+      } else if (message.data === 'off') {
+        setImagen(imagenApagado);
+      }
+    };
+
+    setWs(socket);
 
     return () => {
       if (socket) {
@@ -48,59 +59,39 @@ const ControlFoco = () => {
       return;
     }
 
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send('on');
-      console.log('Enviado: on');
-      setImagen(imagenPrendido);
+    if (ws && ws.readyState === W3CWebSocket.OPEN) {
+      const nuevoEstado = imagen === imagenApagado ? 'on' : 'off';
+      ws.send(nuevoEstado);
+      console.log('Enviado:', nuevoEstado);
     } else {
       setHayError(true);
     }
   };
 
-  return (
-    <View style={styles.contenedor}>
-      <Text style={styles.titulo}>Control del Foco</Text>
+  const reintentarConexion = () => {
+    setHayError(false);
+    // Aquí podrías implementar la lógica para reconectar el WebSocket
+  };
 
-      {hayError && <Text style={styles.error}>No hay conexión, no se puede controlar el foco.</Text>}
+  return (
+    <View style={globalStyles.contenedor}>
+      <Text style={globalStyles.titulo}>Control del Foco</Text>
+
+      {hayError && <Text style={globalStyles.error}>No hay conexión, no se puede controlar el foco.</Text>}
 
       <TouchableOpacity onPress={manejarPresionImagen}>
-        <Image source={imagen} style={styles.imagenFoco} />
+        <Image source={imagen} style={globalStyles.imagenFoco} />
       </TouchableOpacity>
 
       {!estaConectado && (
         <Button
           title="Reintentar conexión"
-          onPress={() => navigation.goBack()}
+          onPress={reintentarConexion}
+          color="#6200ee"
         />
       )}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#f9f9f9',
-  },
-  titulo: {
-    fontSize: 24,
-    marginBottom: 20,
-    color: '#333',
-  },
-  imagenFoco: {
-    width: 120,
-    height: 120,
-    margin: 20,
-    borderRadius: 10,
-  },
-  error: {
-    color: 'red',
-    marginTop: 20,
-    fontSize: 16,
-  },
-});
 
 export default ControlFoco;

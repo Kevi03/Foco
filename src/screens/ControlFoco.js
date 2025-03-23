@@ -1,95 +1,65 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, Image, TouchableOpacity } from 'react-native';
-import { w3cwebsocket as W3CWebSocket } from 'websocket';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, Image, TouchableOpacity, Alert } from 'react-native';
 import globalStyles from '../style/GlobalStyles'; 
 
 const imagenApagado = require('../../assets/focoApagado.jpg');
 const imagenPrendido = require('../../assets/focoPrendido.jpg');
 
 const ControlFoco = () => {
-  const [estaConectado, setEstaConectado] = useState(false);
+  const [ledStatus, setLedStatus] = useState(false);
   const [ws, setWs] = useState(null);
-  const [hayError, setHayError] = useState(false);
-  const [imagen, setImagen] = useState(imagenApagado);
-  const navigation = useNavigation();
 
   useEffect(() => {
-    const socket = new W3CWebSocket('ws://<IP_DEL_ESP32>:<PUERTO>');
+    const websocket = new WebSocket('wss://echo.websocket.events');
 
-    socket.onopen = () => {
-      console.log('Conexión WebSocket establecida');
-      setEstaConectado(true);
-      setHayError(false);
-      setWs(socket);
+    websocket.onopen = () => {
+      Alert.alert('Conexión WebSocket', 'Conexión establecida');
+      setWs(websocket);
     };
 
-    socket.onerror = (error) => {
-      console.log('Error de conexión WebSocket', error);
-      setEstaConectado(false);
-      setHayError(true);
-    };
-
-    socket.onclose = () => {
-      console.log('Conexión WebSocket cerrada');
-      setEstaConectado(false);
-      setHayError(true);
-    };
-
-    socket.onmessage = (message) => {
-      if (message.data === 'on') {
-        setImagen(imagenPrendido);
-      } else if (message.data === 'off') {
-        setImagen(imagenApagado);
+    websocket.onmessage = (message) => {
+      try {
+        const data = JSON.parse(message.data);
+        Alert.alert('Mensaje recibido', JSON.stringify(data));
+        setLedStatus(data.led_status);
+      } catch (error) {
+        console.error('Error al analizar JSON:', error);
       }
     };
-
-    setWs(socket);
+    
+    websocket.onerror = (error) => {
+      Alert.alert('Error de conexión', JSON.stringify(error));
+    };
+    
+    websocket.onclose = () => {
+      Alert.alert('Conexión WebSocket', 'Conexión cerrada');
+      setWs(null);
+    };
 
     return () => {
-      if (socket) {
-        socket.close();
-      }
+      websocket.close();
     };
   }, []);
 
-  const manejarPresionImagen = () => {
-    if (!estaConectado) {
-      setHayError(true);
+  const toggleLed = () => {
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      Alert.alert('Error', 'No hay conexión con el servidor.');
       return;
     }
-
-    if (ws && ws.readyState === W3CWebSocket.OPEN) {
-      const nuevoEstado = imagen === imagenApagado ? 'on' : 'off';
-      ws.send(nuevoEstado);
-      console.log('Enviado:', nuevoEstado);
-    } else {
-      setHayError(true);
-    }
-  };
-
-  const reintentarConexion = () => {
-    setHayError(false);
-    // Aquí podrías implementar la lógica para reconectar el WebSocket
+    
+    const newStatus = !ledStatus;
+    ws.send(JSON.stringify({ led_status: newStatus }));
   };
 
   return (
     <View style={globalStyles.contenedor}>
       <Text style={globalStyles.titulo}>Control del Foco</Text>
-
-      {hayError && <Text style={globalStyles.error}>No hay conexión, no se puede controlar el foco.</Text>}
-
-      <TouchableOpacity onPress={manejarPresionImagen}>
-        <Image source={imagen} style={globalStyles.imagenFoco} />
-      </TouchableOpacity>
-
-      {!estaConectado && (
-        <Button
-          title="Reintentar conexión"
-          onPress={reintentarConexion}
-          color="#6200ee"
+      <TouchableOpacity onPress={toggleLed}>
+        <Image 
+          source={ledStatus ? imagenPrendido : imagenApagado} 
+          style={globalStyles.imagenFoco} 
         />
-      )}
+      </TouchableOpacity>
     </View>
   );
 };

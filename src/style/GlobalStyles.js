@@ -53,6 +53,7 @@ const globalStyles = StyleSheet.create({
     height: 120,
     margin: 20,
     borderRadius: 10,
+    alignSelf: 'center'
   },
 });
 

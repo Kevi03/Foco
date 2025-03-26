@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, Image, TouchableOpacity, Alert } from 'react-native';
 import globalStyles from '../style/GlobalStyles'; 
+import { ESP32IpContext } from '../context/ESP32IpContext'; 
 
 const imagenApagado = require('../../assets/focoApagado.jpg');
 const imagenPrendido = require('../../assets/focoPrendido.jpg');
 
 const ControlFoco = () => {
+  const { esp32Ip } = useContext(ESP32IpContext);
   const [ledStatus, setLedStatus] = useState(false);
   const [ws, setWs] = useState(null);
 
-  useEffect(() => {
-    const websocket = new WebSocket('wss://echo.websocket.events');
+  useEffect(() => {0
+    const websocket = new WebSocket(`ws://${esp32Ip}:`); 
 
     websocket.onopen = () => {
       Alert.alert('Conexión WebSocket', 'Conexión establecida');
@@ -39,7 +41,7 @@ const ControlFoco = () => {
     return () => {
       websocket.close();
     };
-  }, []);
+  }, [esp32Ip]); 
 
   const toggleLed = () => {
     if (!ws || ws.readyState !== WebSocket.OPEN) {

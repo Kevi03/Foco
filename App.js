@@ -30,3 +30,5 @@ export default function App() {
     </ESP32IpProvider>
   );
 }
+
+export default AppWrapper;

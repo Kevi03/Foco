@@ -10,8 +10,11 @@ const globalStyles = StyleSheet.create({
     fontSize: 24,
     textAlign: 'center',
     marginBottom: 20,
-    color: '#333',
+    color: '#fff',
     fontWeight: 'bold',
+    backgroundColor: '#6200ee',
+    padding: 10,
+    borderRadius: 5,
   },
   input: {
     height: 40,
@@ -39,6 +42,9 @@ const globalStyles = StyleSheet.create({
   },
   botonesContainer: {
     marginTop: 10,
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
   },
   espacioBotones: {
     marginVertical: 10,

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, Alert } from 'react-native';
+import globalStyles from '../style/GlobalStyles';
 
 export default function InicioSesion({ navigation }) {
   const [usuario, setUsuario] = useState('');
@@ -17,11 +18,11 @@ export default function InicioSesion({ navigation }) {
   };
 
   return (
-    <View style={styles.contenedor}>
-      <Text style={styles.titulo}>Iniciar Sesión</Text>
+    <View style={globalStyles.contenedor}>
+      <Text style={globalStyles.titulo}>Iniciar Sesión</Text>
       
       <TextInput
-        style={styles.input}
+        style={globalStyles.input}
         placeholder='Nombre De Usuario'
         maxLength={25}
         value={usuario}
@@ -29,7 +30,7 @@ export default function InicioSesion({ navigation }) {
       />
       
       <TextInput
-        style={styles.input}
+        style={globalStyles.input}
         placeholder='Contraseña'
         maxLength={20}
         secureTextEntry
@@ -37,52 +38,7 @@ export default function InicioSesion({ navigation }) {
         onChangeText={setPassword}
       />
       
-      <TouchableOpacity onPress={goIn} style={styles.botonesContainer}>
-        <Text style={styles.texto}>Iniciar Sesión</Text>
-      </TouchableOpacity>
+      <Button title="Iniciar Sesión" onPress={goIn} color="#6200ee" />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#f9f9f9',
-  },
-  titulo: {
-    fontSize: 24,
-    textAlign: 'center',
-    marginBottom: 20,
-    color: '#333',
-    fontWeight: 'bold',
-  },
-  input: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 15,
-    paddingLeft: 10,
-    backgroundColor: '#fff',
-  },
-  texto: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  botonesContainer: {
-    marginTop: 10,
-    backgroundColor: '#6200ee',
-    paddingVertical: 12,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-  espacioBotones: {
-    marginVertical: 10,
-  },
-  error: {
-    color: 'red',
-    marginTop: 20,
-    fontSize: 16,
-  },
-});

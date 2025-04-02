@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import WifiManager from 'react-native-wifi-reborn';
 import { ESP32IpContext } from '../context/ESP32IpContext';
 import globalStyles from '../style/GlobalStyles'; 
@@ -9,6 +10,7 @@ const ConfiguracionWiFi = () => {
   const [password, setPassword] = useState('');
   const [ipAddress, setIpAddress] = useState('');
   const { setESP32Ip } = useContext(ESP32IpContext);
+  const navigation = useNavigation();
 
   const conectar = async () => {
     if (ssid === '' || password === '') {
@@ -30,8 +32,14 @@ const ConfiguracionWiFi = () => {
       return;
     }
 
-    await setESP32Ip(ipAddress);
-    Alert.alert('IP guardada', `Dirección IP ${ipAddress} guardada correctamente`);
+    const success = await setESP32Ip(ipAddress);
+    if (success) {
+      Alert.alert('IP guardada', `Dirección IP ${ipAddress} guardada correctamente`, [
+        { text: 'OK', onPress: () => navigation.replace('PaginaPrincipal') }
+      ]);
+    } else {
+      Alert.alert('Error', 'No se pudo guardar la dirección IP');
+    }
   };
 
   return (

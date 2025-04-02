@@ -1,21 +1,14 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, Alert } from 'react-native';
 import WifiManager from 'react-native-wifi-reborn';
-import globalStyles from '../style/GlobalStyles';
 import { ESP32IpContext } from '../context/ESP32IpContext';
-import { useNavigation } from '@react-navigation/native';
+import globalStyles from '../style/GlobalStyles'; 
 
 const ConfiguracionWiFi = () => {
   const [ssid, setSsid] = useState('');
   const [password, setPassword] = useState('');
   const [ipAddress, setIpAddress] = useState('');
   const { setESP32Ip } = useContext(ESP32IpContext);
-  const navigation = useNavigation();
-
-  const isValidIP = (ip) => {
-    const ipv4Regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-    return ipv4Regex.test(ip);
-  };
 
   const conectar = async () => {
     if (ssid === '' || password === '') {
@@ -27,7 +20,7 @@ const ConfiguracionWiFi = () => {
       await WifiManager.connectToProtectedSSID(ssid, password, false);
       Alert.alert('Conexión exitosa', `Conectado a ${ssid}`);
     } catch (error) {
-      Alert.alert('Error', 'No se pudo conectar a la red Wi-Fi. Verifica los datos ingresados.');
+      Alert.alert('Error', 'No se pudo conectar a la red Wi-Fi');
     }
   };
 
@@ -37,19 +30,8 @@ const ConfiguracionWiFi = () => {
       return;
     }
 
-    if (!isValidIP(ipAddress)) {
-      Alert.alert('Error', 'La dirección IP no tiene un formato válido (Ej: 192.168.1.1)');
-      return;
-    }
-
-    const success = await setESP32Ip(ipAddress);
-    if (success) {
-      Alert.alert('IP guardada', `Dirección IP ${ipAddress} guardada correctamente`, [
-        { text: 'OK', onPress: () => navigation.navigate('PaginaPrincipal') }
-      ]);
-    } else {
-      Alert.alert('Error', 'No se pudo guardar la dirección IP');
-    }
+    await setESP32Ip(ipAddress);
+    Alert.alert('IP guardada', `Dirección IP ${ipAddress} guardada correctamente`);
   };
 
   return (
@@ -82,10 +64,6 @@ const ConfiguracionWiFi = () => {
         onChangeText={setIpAddress}
         keyboardType="numeric"
       />
-
-      <Text style={{ color: 'gray', marginBottom: 10 }}>
-        Ejemplo: 192.168.1.100
-      </Text>
 
       <Button title="Guardar IP" onPress={guardarIp} color="#6200ee" />
     </View>

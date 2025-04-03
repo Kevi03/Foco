@@ -17,7 +17,10 @@ const PaginaPrincipal = () => {
     };
 
     obtenerInformacionRed();
-  }, []);
+    if (!esp32Ip) {
+      navigation.replace('ConfiguracionWiFi');
+    }
+  }, [esp32Ip]);
 
   return (
     <SafeAreaView style={globalStyles.contenedor}>

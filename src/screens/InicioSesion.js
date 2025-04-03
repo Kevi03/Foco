@@ -1,17 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, Alert } from 'react-native';
 import globalStyles from '../style/GlobalStyles';
+import { ESP32IpContext } from '../context/ESP32IpContext';
 
 export default function InicioSesion({ navigation }) {
   const [usuario, setUsuario] = useState('');
   const [password, setPassword] = useState('');
-
-  const userList = [{ user: 'Kevin', pass: '123' }];
+  const { esp32Ip } = useContext(ESP32IpContext);
+  
+  const userList = [
+    { user: 'Kevin', pass: '123' },
+    { user: 'Cristian', pass: '456' }
+  ];
 
   const goIn = () => {
     const userFound = userList.some(({ user, pass }) => user === usuario && pass === password);
+    
     if (userFound) {
-      navigation.replace('PaginaPrincipal');
+      if (esp32Ip) {
+        navigation.replace('PaginaPrincipal');
+      } else {
+        navigation.replace('ConfiguracionWiFi');
+      }
     } else {
       Alert.alert('Error', 'Usuario o contraseña incorrectos');
     }

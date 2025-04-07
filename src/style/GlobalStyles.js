@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-export const placeholderColor = '#AAAAAA';  // O el color que prefieras
+export const placeholderColor = '#AAAAAA'; 
 const globalStyles = StyleSheet.create({
   contenedor: {
     flex: 1,
@@ -71,6 +71,7 @@ const globalStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#03DAC6',
     backgroundColor: '#1E1E1E',
+    resizeMode: 'contain',
   },
 
   botonesContainer: {

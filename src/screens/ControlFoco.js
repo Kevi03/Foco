@@ -3,8 +3,8 @@ import { View, Text, Image, TouchableOpacity, Alert } from 'react-native';
 import globalStyles from '../style/GlobalStyles'; 
 import { ESP32IpContext } from '../context/ESP32IpContext'; 
 
-const imagenApagado = require('../../assets/focoApagado.jpg');
-const imagenPrendido = require('../../assets/focoPrendido.jpg');
+const imagenApagado = require('../../assets/focoApagado.png');
+const imagenPrendido = require('../../assets/focoPrendido.png');
 
 const ControlFoco = () => {
   const { esp32Ip } = useContext(ESP32IpContext);

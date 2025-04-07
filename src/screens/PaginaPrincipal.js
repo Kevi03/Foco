@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, SafeAreaView, Button } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import * as Network from 'expo-network';
 import { useNavigation } from '@react-navigation/native';
 import globalStyles from '../style/GlobalStyles';
@@ -38,18 +38,22 @@ const PaginaPrincipal = () => {
       </View>
       
       <View style={globalStyles.botonesContainer}>
-        <Button
-          title="Conectarse manualmente"
-          onPress={() => navigation.navigate('ConfiguracionWiFi')}
-          color="#6200ee"
-        />
-        <View style={globalStyles.espacioBotones} />
-        <Button
-          title="Controlar foco"
-          onPress={() => navigation.navigate('ControlFoco')}
-          color="#6200ee"
-        />
-      </View>
+
+      <TouchableOpacity 
+        style={globalStyles.botonPrimario}
+        onPress={() => navigation.navigate('ConfiguracionWiFi')}
+      > 
+        <Text style={globalStyles.textoBoton}>Conectarce manualmente</Text>
+      </TouchableOpacity>
+      <View style={globalStyles.espacioBotones} />
+
+      <TouchableOpacity 
+        style={globalStyles.botonPrimario}
+        onPress={() => navigation.navigate('ControlFoco')}
+      >
+        <Text style={globalStyles.textoBoton}>Controlar foco</Text>
+      </TouchableOpacity>
+    </View>
     </SafeAreaView>
   );
 };

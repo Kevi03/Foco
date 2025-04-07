@@ -1,9 +1,9 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import WifiManager from 'react-native-wifi-reborn';
 import { ESP32IpContext } from '../context/ESP32IpContext';
-import globalStyles from '../style/GlobalStyles'; 
+import globalStyles, { placeholderColor } from '../style/GlobalStyles'; 
 
 const ConfiguracionWiFi = () => {
   const [ssid, setSsid] = useState('');
@@ -49,6 +49,7 @@ const ConfiguracionWiFi = () => {
       <TextInput
         style={globalStyles.input}
         placeholder="Nombre de la red (SSID)"
+        placeholderTextColor={placeholderColor} 
         value={ssid}
         onChangeText={setSsid}
       />
@@ -57,23 +58,30 @@ const ConfiguracionWiFi = () => {
         style={globalStyles.input}
         placeholder="Contraseña"
         secureTextEntry
+        placeholderTextColor={placeholderColor}
         value={password}
         onChangeText={setPassword}
       />
 
-      <Button title="Conectar" onPress={conectar} color="#6200ee" />
+      <TouchableOpacity style={globalStyles.botonPrimario}  onPress={conectar} >
+      <Text style={globalStyles.textoBoton}>Conectarce</Text>
+      </TouchableOpacity>
 
       <Text style={[globalStyles.titulo, { marginTop: 20 }]}>Configuración ESP32</Text>
 
       <TextInput
         style={globalStyles.input}
         placeholder="Dirección IP de la tablilla ESP32"
+        placeholderTextColor={placeholderColor}
         value={ipAddress}
         onChangeText={setIpAddress}
         keyboardType="numeric"
       />
 
-      <Button title="Guardar IP" onPress={guardarIp} color="#6200ee" />
+      <TouchableOpacity style={globalStyles.botonPrimario} onPress={guardarIp} >
+        <Text style={globalStyles.textoBoton}>Guardar ip</Text>
+        </TouchableOpacity>
+      
     </View>
   );
 };

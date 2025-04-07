@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import WifiManager from 'react-native-wifi-reborn';
 import { ESP32IpContext } from '../context/ESP32IpContext';
-import globalStyles, { placeholderColor } from '../style/GlobalStyles'; 
+import globalStyles, { placeholderColor } from '../style/GlobalStyles';
 
 const ConfiguracionWiFi = () => {
   const [ssid, setSsid] = useState('');
@@ -26,9 +26,20 @@ const ConfiguracionWiFi = () => {
     }
   };
 
+  // Validación de IP
+  const esIpValida = (ip) => {
+    const regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    return regex.test(ip);
+  };
+
   const guardarIp = async () => {
     if (!ipAddress.trim()) {
       Alert.alert('Error', 'Por favor, ingresa una dirección IP');
+      return;
+    }
+
+    if (!esIpValida(ipAddress)) {
+      Alert.alert('Error', 'La dirección IP no es válida');
       return;
     }
 
@@ -64,7 +75,7 @@ const ConfiguracionWiFi = () => {
       />
 
       <TouchableOpacity style={globalStyles.botonPrimario}  onPress={conectar} >
-      <Text style={globalStyles.textoBoton}>Conectarce</Text>
+        <Text style={globalStyles.textoBoton}>Conectarce</Text>
       </TouchableOpacity>
 
       <Text style={[globalStyles.titulo, { marginTop: 20 }]}>Configuración ESP32</Text>
@@ -80,8 +91,7 @@ const ConfiguracionWiFi = () => {
 
       <TouchableOpacity style={globalStyles.botonPrimario} onPress={guardarIp} >
         <Text style={globalStyles.textoBoton}>Guardar ip</Text>
-        </TouchableOpacity>
-      
+      </TouchableOpacity>
     </View>
   );
 };

@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import WifiManager from 'react-native-wifi-reborn';
 import { ESP32IpContext } from '../context/ESP32IpContext';
 import globalStyles, { placeholderColor } from '../style/GlobalStyles';
 

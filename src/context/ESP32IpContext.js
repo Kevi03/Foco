@@ -1,18 +1,15 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { MMKV } from 'react-native-mmkv';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const ESP32IpContext = createContext();
-
-// Crear instancia de almacenamiento MMKV
-const storage = new MMKV();
 
 export const ESP32IpProvider = ({ children, onReady }) => {
   const [esp32Ip, setEsp32Ip] = useState(null);
 
   useEffect(() => {
-    const loadIp = () => {
+    const loadIp = async () => {
       try {
-        const savedIp = storage.getString('esp32_ip');
+        const savedIp = await AsyncStorage.getItem('esp32_ip');
         setEsp32Ip(savedIp);
         if (onReady) onReady(!!savedIp);
       } catch (e) {
@@ -23,9 +20,9 @@ export const ESP32IpProvider = ({ children, onReady }) => {
     loadIp();
   }, []);
 
-  const saveIp = (ip) => {
+  const saveIp = async (ip) => {
     try {
-      storage.set('esp32_ip', ip);
+      await AsyncStorage.setItem('esp32_ip', ip);
       setEsp32Ip(ip);
       return true;
     } catch (e) {

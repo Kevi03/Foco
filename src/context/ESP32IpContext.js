@@ -1,15 +1,18 @@
 import React, { createContext, useState, useEffect } from 'react';
-import * as SecureStore from 'expo-secure-store';
+import { MMKV } from 'react-native-mmkv';
 
 export const ESP32IpContext = createContext();
+
+// Crear instancia de almacenamiento MMKV
+const storage = new MMKV();
 
 export const ESP32IpProvider = ({ children, onReady }) => {
   const [esp32Ip, setEsp32Ip] = useState(null);
 
   useEffect(() => {
-    const loadIp = async () => {
+    const loadIp = () => {
       try {
-        const savedIp = await SecureStore.getItemAsync('esp32_ip');
+        const savedIp = storage.getString('esp32_ip');
         setEsp32Ip(savedIp);
         if (onReady) onReady(!!savedIp);
       } catch (e) {
@@ -20,9 +23,9 @@ export const ESP32IpProvider = ({ children, onReady }) => {
     loadIp();
   }, []);
 
-  const saveIp = async (ip) => {
+  const saveIp = (ip) => {
     try {
-      await SecureStore.setItemAsync('esp32_ip', ip);
+      storage.set('esp32_ip', ip);
       setEsp32Ip(ip);
       return true;
     } catch (e) {
